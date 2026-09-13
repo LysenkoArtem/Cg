@@ -1,3 +1,0 @@
-/Users/lysenkoartyom/Lectures/cg/build/CMakeFiles/program.dir
-/Users/lysenkoartyom/Lectures/cg/build/CMakeFiles/edit_cache.dir
-/Users/lysenkoartyom/Lectures/cg/build/CMakeFiles/rebuild_cache.dir
