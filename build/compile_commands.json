@@ -1,0 +1,8 @@
+[
+{
+  "directory": "/Users/lysenkoartyom/Lectures/cg/build",
+  "command": "/usr/bin/c++  -isystem /opt/homebrew/include -std=gnu++20 -arch arm64 -o CMakeFiles/program.dir/src/main.cpp.o -c /Users/lysenkoartyom/Lectures/cg/src/main.cpp",
+  "file": "/Users/lysenkoartyom/Lectures/cg/src/main.cpp",
+  "output": "CMakeFiles/program.dir/src/main.cpp.o"
+}
+]
