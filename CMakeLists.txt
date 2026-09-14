@@ -9,6 +9,8 @@ find_package(SFML 3 REQUIRED COMPONENTS Graphics Window System)
 
 add_executable(program
     src/main.cpp
+    src/cg.cpp
+    src/visualize.cpp
 )
 
 target_link_libraries(program PRIVATE
