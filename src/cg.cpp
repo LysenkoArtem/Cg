@@ -1,4 +1,7 @@
 #include "cg.h"
+#include <algorithm>
+#include <cstdlib>
+#include <math.h>
 
 namespace cg {
 
@@ -36,4 +39,40 @@ bool is_convex(simple_polygon_2 const& poly) {
     return true;
 }
 
+simple_polygon_2 generate_convex_polygon(int n) {
+    srand((unsigned)time(0)); 
+    std::vector<int> points;
+    while (points.size() < n) {
+        int p = rand() % 360;
+        if (std::find(points.begin(), points.end(), p) == points.end())
+            points.push_back(p);
+    }
+    std::sort(points.begin(), points.end());
+
+    simple_polygon_2 poly;
+    for (int p: points) {
+        poly.push_back({cos(p*M_PI/180), sin(p*M_PI/180)});
+    }
+
+    return poly;
+}
+
+simple_polygon_2 generate_star_polygon(int n) {
+    srand((unsigned)time(0)); 
+    std::vector<int> points;
+    while (points.size() < n) {
+        int p = rand() % 360;
+        if (std::find(points.begin(), points.end(), p) == points.end())
+            points.push_back(p);
+    }
+    std::sort(points.begin(), points.end());
+
+    simple_polygon_2 poly;
+    for (int p: points) {
+        float r = (float)(rand()%101)/200 + 0.5;
+        poly.push_back({cos(p*M_PI/180)*r , sin(p*M_PI/180)*r});
+    }
+
+    return poly;
+}
 }

@@ -1,6 +1,7 @@
 #ifndef CG_H
 #define CG_H
 
+#include <cstdlib>
 #include <vector>
 
 namespace cg {
@@ -49,6 +50,9 @@ enum class Orientation {
 Orientation orientation(point_2 a, point_2 b, point_2 c);
 
 bool is_convex(simple_polygon_2 const& poly);
+
+simple_polygon_2 generate_convex_polygon(int n);
+simple_polygon_2 generate_star_polygon(int n);
 
 }
 
