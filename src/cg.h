@@ -54,6 +54,7 @@ bool is_convex(simple_polygon_2 const& poly);
 simple_polygon_2 generate_convex_polygon(int n);
 simple_polygon_2 generate_star_polygon(int n);
 
+bool is_point_in_simple_polygon(simple_polygon_2 poly, point_2 z);
 }
 
 #endif
