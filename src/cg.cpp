@@ -77,7 +77,7 @@ simple_polygon_2 generate_star_polygon(int n) {
 }
 
 
-bool is_point_in_simple_polygon(simple_polygon_2 poly, point_2 z) {
+bool point_in_simple_polygon(simple_polygon_2 poly, point_2 z) {
     int n = poly.size();
     bool l = false;
     for (int j=n-1, i=0; i < n; j=i, ++i) {
