@@ -1,6 +1,7 @@
 #include "cg.h"
 #include <algorithm>
 #include <cstdlib>
+#include <iostream>
 #include <math.h>
 
 namespace cg {
@@ -49,6 +50,7 @@ simple_polygon_2 generate_convex_polygon(int n) {
     }
     std::sort(points.begin(), points.end());
 
+
     simple_polygon_2 poly;
     for (int p: points) {
         poly.push_back({cos(p*M_PI/180), sin(p*M_PI/180)});
@@ -77,7 +79,7 @@ simple_polygon_2 generate_star_polygon(int n) {
 }
 
 
-bool point_in_simple_polygon(simple_polygon_2 poly, point_2 z) {
+bool point_in_simple_polygon(simple_polygon_2& poly, point_2 z) {
     int n = poly.size();
     bool l = false;
     for (int j=n-1, i=0; i < n; j=i, ++i) {
@@ -87,6 +89,35 @@ bool point_in_simple_polygon(simple_polygon_2 poly, point_2 z) {
             l = !l;
     }
     return l % 2;
+}
+
+bool point_in_star_polygon(simple_polygon_2& poly, point_2 z, point_2 kernel_point)  {
+    int p_s = 0;
+    int p_end = poly.size();
+    int p_m = p_end / 2;
+    while (p_end - p_s > 1) {
+        p_m = (p_end + p_s) / 2;
+        if (orientation(kernel_point, poly[p_s], poly[p_m]) == Orientation::left)
+            if (orientation(kernel_point, poly[p_s], z) != Orientation::right && orientation(kernel_point, poly[p_m], z) == Orientation::right) {
+                p_end = p_m;
+            }
+            else {
+                p_s = p_m;
+            }
+            else {
+                if (orientation(kernel_point, poly[p_s], z) == Orientation::right && orientation(kernel_point, poly[p_m], z) != Orientation::right) {
+                    p_s = p_m;
+                }
+                else {
+                    p_end = p_m;
+                }
+            }
+    }
+    return (orientation(poly[p_s], poly[(p_s+1)%poly.size()], z) == Orientation::left);
+}
+
+bool point_in_convex_polygon(simple_polygon_2& poly, point_2 z) {
+    return point_in_star_polygon(poly, z, {0, 0});
 }
 
 }

@@ -19,7 +19,7 @@ void draw_poligon(cg::simple_polygon_2 poly) {
 
     for (std::size_t i = 0; i < poly.size(); ++i)
     {
-        shape.setPoint(i, sf::Vector2f(SCALE*poly[i].x + WIDTH/2, SCALE*poly[i].y + HEIGHT/2));
+        shape.setPoint(i, sf::Vector2f(SCALE*poly[i].x + WIDTH/2.0, -SCALE*poly[i].y + HEIGHT/2.0));
     }
 
     shape.setFillColor(sf::Color::White);
@@ -37,7 +37,7 @@ void draw_poligon(cg::simple_polygon_2 poly) {
 
     sf::CircleShape point(5, 5);
     point.setFillColor(sf::Color::Green);
-    point.setPosition({WIDTH/2, HEIGHT/2});
+    point.setPosition({WIDTH/2.0, HEIGHT/2.0});
 
     while (window.isOpen())
     {
@@ -51,7 +51,7 @@ void draw_poligon(cg::simple_polygon_2 poly) {
                     click_x = mousePressed->position.x;
                     click_y = mousePressed->position.y;
 
-                    if (cg::point_in_simple_polygon(poly, {(click_x - WIDTH/2)/SCALE, (click_y - HEIGHT/2)/SCALE}))
+                    if (cg::point_in_convex_polygon(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
                         point.setFillColor(sf::Color::Green);
                     else
                         point.setFillColor(sf::Color::Red);
@@ -66,6 +66,7 @@ void draw_poligon(cg::simple_polygon_2 poly) {
         //window.draw(circ);
         window.draw(shape);
         window.draw(point);
+
 
 
         window.display();
