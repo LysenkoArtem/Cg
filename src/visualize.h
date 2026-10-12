@@ -3,6 +3,6 @@
 
 #include "cg.h"
 
-void draw_poligon(cg::simple_polygon_2 poly);
+void draw_poligon(cg::simple_polygon_2 poly, int mode);
 
 #endif

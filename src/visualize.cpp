@@ -6,7 +6,7 @@
 #define HEIGHT 1000
 #define SCALE 300
 
-void draw_poligon(cg::simple_polygon_2 poly) {
+void draw_poligon(cg::simple_polygon_2 poly, int mode) {
     sf::RenderWindow window(
         sf::VideoMode({WIDTH, HEIGHT}),
         "Calc geometry"
@@ -51,7 +51,13 @@ void draw_poligon(cg::simple_polygon_2 poly) {
                     click_x = mousePressed->position.x;
                     click_y = mousePressed->position.y;
 
-                    if (cg::point_in_convex_polygon_2(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
+                    if (mode == 1 && cg::point_in_simple_polygon(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
+                        point.setFillColor(sf::Color::Green);
+                    else if (mode == 2 && cg::point_in_convex_polygon(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
+                        point.setFillColor(sf::Color::Green);
+                    else if (mode == 3 && cg::point_in_convex_polygon_2(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
+                        point.setFillColor(sf::Color::Green);
+                    else if (mode == 4 && cg::point_in_star_polygon(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}, {0, 0}))
                         point.setFillColor(sf::Color::Green);
                     else
                         point.setFillColor(sf::Color::Red);

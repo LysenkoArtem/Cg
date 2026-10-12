@@ -19,19 +19,19 @@ int main() {
     switch (mode) {
         case 1:
             poly = cg::generate_convex_polygon(n);
-            draw_poligon(poly);
+            draw_poligon(poly, mode);
             break;
         case 2:
             poly = cg::generate_convex_polygon(n);
-            draw_poligon(poly);
+            draw_poligon(poly, mode);
             break;
         case 3:
             poly = cg::generate_convex_polygon(n);
-            draw_poligon(poly);
+            draw_poligon(poly, mode);
             break;
         case 4:
             poly = cg::generate_star_polygon(n);
-            draw_poligon(poly);
+            draw_poligon(poly, mode);
             break;
 
         default:
