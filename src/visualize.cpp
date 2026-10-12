@@ -51,7 +51,7 @@ void draw_poligon(cg::simple_polygon_2 poly) {
                     click_x = mousePressed->position.x;
                     click_y = mousePressed->position.y;
 
-                    if (cg::point_in_convex_polygon(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
+                    if (cg::point_in_convex_polygon_2(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
                         point.setFillColor(sf::Color::Green);
                     else
                         point.setFillColor(sf::Color::Red);

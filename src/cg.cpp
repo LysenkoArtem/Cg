@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <math.h>
+#include <algorithm>
 
 namespace cg {
 
@@ -117,7 +118,25 @@ bool point_in_star_polygon(simple_polygon_2& poly, point_2 z, point_2 kernel_poi
 }
 
 bool point_in_convex_polygon(simple_polygon_2& poly, point_2 z) {
-    return point_in_star_polygon(poly, z, {0, 0});
+    return point_in_star_polygon(poly, z, (poly[0]+poly[1]+poly[2])/3.0);
+}
+
+//struct convex_pred_t {
+//    bool operator()(point_2 p) const {
+//        return orientation(p0, p, z) == Orientation::left;
+//
+//    }
+//    point_2 p0;
+//    point_2 z;
+//};
+
+bool point_in_convex_polygon_2(simple_polygon_2& poly, point_2 z) {
+    auto partition = std::partition_point(poly.begin()+1, poly.end(),
+                    [p0 = poly[0], z](point_2 p) {return orientation(p0, p, z) == Orientation::left;});
+
+    if (partition == poly.begin()+1 || partition == poly.end())
+        return false;
+    return (orientation(*(partition-1), *(partition), z) == Orientation::left);
 }
 
 }
