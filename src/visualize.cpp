@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <iostream>
 #include "cg.h"
 
 #define WIDTH 1000
@@ -35,10 +34,13 @@ void draw_poligon(cg::simple_polygon_2 poly, int mode) {
     float click_y = 0;
     sf::Color point_color = sf::Color::Green;
 
+    cg::polygon_tangents_2 tangents = {{WIDTH/2.0, HEIGHT/2.0}, {WIDTH/2.0, HEIGHT/2.0}};
+
     sf::CircleShape point(5, 5);
     point.setFillColor(sf::Color::Green);
     point.setPosition({WIDTH/2.0, HEIGHT/2.0});
 
+    sf::Vector2f p0;
     while (window.isOpen())
     {
         while (auto event = window.pollEvent())
@@ -59,6 +61,11 @@ void draw_poligon(cg::simple_polygon_2 poly, int mode) {
                         point.setFillColor(sf::Color::Green);
                     else if (mode == 4 && cg::point_in_star_polygon(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}, {0, 0}))
                         point.setFillColor(sf::Color::Green);
+                    else if (mode == 5) {
+                        tangents = cg::find_tangetnts_optimal(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE});
+                        p0 = {click_x, click_y};
+                    }
+
                     else
                         point.setFillColor(sf::Color::Red);
                     point.setPosition({click_x-4.5f, click_y-4.5f});
@@ -72,7 +79,21 @@ void draw_poligon(cg::simple_polygon_2 poly, int mode) {
         //window.draw(circ);
         window.draw(shape);
         window.draw(point);
+        if (mode == 5) {
+            sf::Vector2f p1({(float)(SCALE*tangents.first.x + WIDTH/2.0), (float)(-SCALE*tangents.first.y + HEIGHT/2.0)});
+            sf::Vector2f p2({(float)(SCALE*tangents.second.x + WIDTH/2.0), (float)(-SCALE*tangents.second.y + HEIGHT/2.0)});
+            std::vector<sf::Vertex> line1 = {
+                sf::Vertex{p0, sf::Color::Black},
+                sf::Vertex{p1, sf::Color::Black}
+            };
 
+            std::vector<sf::Vertex> line2 = {
+                sf::Vertex{p0, sf::Color::Black},
+                sf::Vertex{p2, sf::Color::Black}
+            };
+            window.draw(line1.data(), line1.size(), sf::PrimitiveType::Lines);
+            window.draw(line2.data(), line2.size(), sf::PrimitiveType::Lines);
+        }
 
 
         window.display();

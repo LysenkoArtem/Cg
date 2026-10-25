@@ -139,4 +139,40 @@ bool point_in_convex_polygon_2(simple_polygon_2& poly, point_2 z) {
     return (orientation(*(partition-1), *(partition), z) == Orientation::left);
 }
 
+polygon_tangents_2 find_tangetnts_brute_force(simple_polygon_2& poly, point_2 z) {
+    if (point_in_convex_polygon(poly, z)) {
+        return {z, z};
+    }
+    polygon_tangents_2 res = {poly[0], poly[0]};
+    for (int i=1; i < poly.size(); i++) {
+        if (orientation(z, res.first, poly[i]) == Orientation::left)
+            res.first = poly[i];
+        if (orientation(z, res.second, poly[i]) == Orientation::right)
+            res.second = poly[i];
+    }
+
+    return res;
+}
+
+polygon_tangents_2 find_tangetnts_optimal(simple_polygon_2& poly, point_2 z) {
+    if (point_in_convex_polygon(poly, z)) {
+        return {z, z};
+    }
+    polygon_tangents_2 res{z, z};
+    auto partition = std::partition_point(poly.begin(), poly.end(),
+                    [p0 = poly[0], orient = orientation(z, poly[0], poly[1]), z](point_2& p) {return orientation(z, p0, p) == orient;});
+
+
+    res.first = *(std::partition_point(poly.begin()+1, partition,
+                    [orient = orientation(z, poly[0], poly[1]), z](point_2& p) {return orientation(z, *(&p - 1), p) == orient;}) - 1);
+
+    if (partition == poly.end())
+        res.second = poly[0];
+    else
+        res.second = *(std::partition_point(partition+1, poly.end(),
+                        [orient = orientation(z, poly[0], poly[1]), z](point_2& p) {return orientation(z, *(&p - 1), p) != orient;}) - 1);
+
+    return res;
+}
+
 }
