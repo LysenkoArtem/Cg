@@ -5,6 +5,15 @@
 #define HEIGHT 1000
 #define SCALE 300
 
+sf::Vector2f transform_to_vis(cg::point_2 p) {
+    return sf::Vector2f(SCALE*p.x + WIDTH/2.0, -SCALE*p.y + HEIGHT/2.0);
+}
+
+cg::point_2 transform_to_logic(float x, float y) {
+    return {(x - WIDTH/2.0)/SCALE, (-y + HEIGHT/2.0)/SCALE};
+}
+
+
 void draw_poligon(cg::simple_polygon_2 poly, int mode) {
     sf::RenderWindow window(
         sf::VideoMode({WIDTH, HEIGHT}),
@@ -17,9 +26,7 @@ void draw_poligon(cg::simple_polygon_2 poly, int mode) {
     shape.setPointCount(poly.size());
 
     for (std::size_t i = 0; i < poly.size(); ++i)
-    {
-        shape.setPoint(i, sf::Vector2f(SCALE*poly[i].x + WIDTH/2.0, -SCALE*poly[i].y + HEIGHT/2.0));
-    }
+        shape.setPoint(i, transform_to_vis(poly[i]));
 
     shape.setFillColor(sf::Color::White);
     shape.setOutlineColor(sf::Color::Black);
@@ -53,16 +60,16 @@ void draw_poligon(cg::simple_polygon_2 poly, int mode) {
                     click_x = mousePressed->position.x;
                     click_y = mousePressed->position.y;
 
-                    if (mode == 1 && cg::point_in_simple_polygon(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
+                    if (mode == 1 && cg::point_in_simple_polygon(poly, transform_to_logic(click_x, click_y)))
                         point.setFillColor(sf::Color::Green);
-                    else if (mode == 2 && cg::point_in_convex_polygon(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
+                    else if (mode == 2 && cg::point_in_convex_polygon(poly, transform_to_logic(click_x, click_y)))
                         point.setFillColor(sf::Color::Green);
-                    else if (mode == 3 && cg::point_in_convex_polygon_2(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}))
+                    else if (mode == 3 && cg::point_in_convex_polygon_2(poly, transform_to_logic(click_x, click_y)))
                         point.setFillColor(sf::Color::Green);
-                    else if (mode == 4 && cg::point_in_star_polygon(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE}, {0, 0}))
+                    else if (mode == 4 && cg::point_in_star_polygon(poly, transform_to_logic(click_x, click_y), {0, 0}))
                         point.setFillColor(sf::Color::Green);
                     else if (mode == 5) {
-                        tangents = cg::find_tangetnts_optimal(poly, {(click_x - WIDTH/2.0)/SCALE, (-click_y + HEIGHT/2.0)/SCALE});
+                        tangents = cg::find_tangetnts_optimal(poly, transform_to_logic(click_x, click_y));
                         p0 = {click_x, click_y};
                     }
 
@@ -80,8 +87,8 @@ void draw_poligon(cg::simple_polygon_2 poly, int mode) {
         window.draw(shape);
         window.draw(point);
         if (mode == 5) {
-            sf::Vector2f p1({(float)(SCALE*tangents.first.x + WIDTH/2.0), (float)(-SCALE*tangents.first.y + HEIGHT/2.0)});
-            sf::Vector2f p2({(float)(SCALE*tangents.second.x + WIDTH/2.0), (float)(-SCALE*tangents.second.y + HEIGHT/2.0)});
+            sf::Vector2f p1 = transform_to_vis(tangents.first);
+            sf::Vector2f p2 = transform_to_vis(tangents.second);
             std::vector<sf::Vertex> line1 = {
                 sf::Vertex{p0, sf::Color::Black},
                 sf::Vertex{p1, sf::Color::Black}
@@ -95,6 +102,57 @@ void draw_poligon(cg::simple_polygon_2 poly, int mode) {
             window.draw(line2.data(), line2.size(), sf::PrimitiveType::Lines);
         }
 
+
+        window.display();
+    }
+}
+
+
+void draw_points(cg::points_array points, sf::RenderWindow& window) {
+    sf::CircleShape point(3, 30);
+    point.setFillColor(sf::Color::Red);
+    for (auto p: points) {
+        sf::Vector2f coords = transform_to_vis(p);
+        coords.x -= 3.f;
+        coords.y -= 3.f;
+        point.setPosition(coords);
+        window.draw(point);
+    }
+}
+
+
+void draw_block_2(cg::points_array points, cg::points_array border) {
+
+    sf::RenderWindow window(
+        sf::VideoMode({WIDTH, HEIGHT}),
+        "Calc geometry"
+    );
+
+    sf::ConvexShape shape;
+
+
+    shape.setPointCount(border.size());
+
+    for (std::size_t i = 0; i < border.size(); ++i)
+        shape.setPoint(i, transform_to_vis(border[i]));
+
+    shape.setFillColor(sf::Color::White);
+    shape.setOutlineColor(sf::Color::Black);
+    shape.setOutlineThickness(3);
+
+    while (window.isOpen())
+    {
+        while (auto event = window.pollEvent())
+        {
+            if (event->is<sf::Event::Closed>())
+                window.close();
+        }
+
+        window.clear(sf::Color::White);
+
+
+        window.draw(shape);
+        draw_points(points, window);
 
         window.display();
     }

@@ -5,31 +5,6 @@
 #include "visualize.h"
 
 
-void test() {
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML 3 Line");
-
-    sf::Vector2f p1({100.f, 100.f});
-    sf::Vector2f p2({700.f, 500.f});
-
-    std::vector<sf::Vertex> line = {
-        sf::Vertex{p1, sf::Color::Black},
-        sf::Vertex{p2, sf::Color::Black}
-    };
-
-    while (window.isOpen()) {
-        while (const std::optional event = window.pollEvent()) {
-            if (event->is<sf::Event::Closed>()) {
-                window.close();
-            }
-        }
-
-        window.clear(sf::Color::White);
-        
-        window.draw(line.data(), line.size(), sf::PrimitiveType::Lines);
-        
-        window.display();
-    }
-}
 
 int main() {
 
@@ -42,6 +17,8 @@ int main() {
     std::cin >> n;
 
     cg::simple_polygon_2 poly;
+    cg::points_array arr;
+    cg::points_array border;
     switch (mode) {
         case 1:
             poly = cg::generate_convex_polygon(n);
@@ -65,6 +42,18 @@ int main() {
             draw_poligon(poly, mode);
             break;
 
+        case 6:
+            arr = cg::generate_points(n);
+            border = cg::convex_hull_graham(arr);
+            draw_block_2(arr, border);
+            break;
+
+        case 7:
+            arr = cg::generate_points(n);
+            border = cg::preparata_hong(arr);
+            draw_block_2(arr, border);
+            break;
+            
         default:
             std::cout << "Wrong arguments\n";
             break;

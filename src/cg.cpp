@@ -4,6 +4,7 @@
 #include <iostream>
 #include <math.h>
 #include <algorithm>
+#include <queue>
 
 namespace cg {
 
@@ -174,5 +175,91 @@ polygon_tangents_2 find_tangetnts_optimal(simple_polygon_2& poly, point_2 z) {
 
     return res;
 }
+
+
+// Block 2
+
+
+points_array generate_points(int n) {
+    srand((unsigned)time(0)); 
+    points_array res;
+    for (int i=0; i < n; i++) {
+        float x = (float)((float) rand()/RAND_MAX)*2 - 1;
+        float y = (float)((float) rand()/RAND_MAX)*2 - 1;
+        res.push_back({x, y});
+    }
+    return res;
+    
+}
+
+
+simple_polygon_2 convex_hull_graham(points_array const &points) {
+point_2 bottom_left = points[0];
+    for (auto p: points) {
+        if (p.x < bottom_left.x)
+            bottom_left = p;
+        else if (p.x == bottom_left.x && p.y < bottom_left.y)
+            bottom_left = p;
+    }
+
+    points_array sorted_points(points);
+
+    std::sort(sorted_points.begin(), sorted_points.end(), 
+        [bottom_left](point_2 const &a, point_2 const &b) {
+
+            Orientation o = orientation(bottom_left, a, b);
+            if (o == Orientation::left)
+                return 1;
+            if (o == Orientation::collinear)
+                if (a.x < b.x || (a.x == b.x && a.y > b.y))
+                    return 1;
+            return 0;
+        }
+        );
+    points_array hull;
+    for (auto point: sorted_points) {
+        while (hull.size() >= 2 && orientation(hull[hull.size()-2], hull[hull.size()-1], point) != Orientation::left) {
+            hull.pop_back();
+        }
+        hull.push_back(point);
+    }
+
+    return hull;
+}
+
+simple_polygon_2 preparata_hong(points_array& points) {
+    points_array sorted_points(points);
+    std::sort(sorted_points.begin(), sorted_points.end(), 
+        [](point_2 const &a, point_2 const &b) {
+                return a.x < b.x;
+        }
+        );
+    for (auto p: sorted_points)
+        std::cerr << p.x << ' ' << p.y << '\n';
+    return prh_rec(sorted_points, 0, points.size());
+
+}
+
+simple_polygon_2 prh_rec(points_array& points, int start, int end) {
+    points_array left_part;
+    points_array right_part;
+
+    if (end - start > 6) {
+        left_part = prh_rec(points, start, (start+end)/2);
+        right_part = prh_rec(points, (start+end)/2, end);
+
+        points_array res(left_part);
+        for (auto point: right_part) {
+            res.push_back(point);
+        }
+        return res;
+    }
+    else {
+        points_array np(points.begin()+start, points.begin()+end);
+        return convex_hull_graham(np);
+    }
+
+}
+
 
 }

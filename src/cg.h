@@ -38,6 +38,8 @@ struct point_2 {
 };
 
 using simple_polygon_2 = std::vector<point_2>;
+using points_array = std::vector<point_2>;
+
 using polygon_tangents_2 = std::pair<point_2, point_2>;
 
 double pseudoscalar(point_2 a, point_2 b);
@@ -54,6 +56,7 @@ bool is_convex(simple_polygon_2 const& poly);
 
 simple_polygon_2 generate_convex_polygon(int n);
 simple_polygon_2 generate_star_polygon(int n);
+points_array generate_points(int n);
 
 bool point_in_simple_polygon(simple_polygon_2& poly, point_2 z);
 bool point_in_star_polygon(simple_polygon_2& poly, point_2 z, point_2 kernel_point);
@@ -62,6 +65,12 @@ bool point_in_convex_polygon(simple_polygon_2& poly, point_2 z);
 bool point_in_convex_polygon_2(simple_polygon_2& poly, point_2 z);
 polygon_tangents_2 find_tangetnts_brute_force(simple_polygon_2& poly, point_2 z);
 polygon_tangents_2 find_tangetnts_optimal(simple_polygon_2& poly, point_2 z);
+
+
+simple_polygon_2 convex_hull_graham(points_array const &points);
+simple_polygon_2 preparata_hong(points_array& points);
+simple_polygon_2 prh_rec(points_array& points, int start, int end);
+
 }
 
 #endif
