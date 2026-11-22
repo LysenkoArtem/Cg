@@ -41,6 +41,8 @@ using simple_polygon_2 = std::vector<point_2>;
 using points_array = std::vector<point_2>;
 
 using polygon_tangents_2 = std::pair<point_2, point_2>;
+using triangle = std::vector<point_2>;
+using triangulation = std::vector<triangle>;
 
 double pseudoscalar(point_2 a, point_2 b);
 
@@ -70,7 +72,7 @@ polygon_tangents_2 find_tangetnts_optimal(simple_polygon_2& poly, point_2 z);
 simple_polygon_2 convex_hull_graham(points_array const &points);
 simple_polygon_2 preparata_hong(points_array& points);
 simple_polygon_2 prh_rec(points_array& points, int start, int end);
-
+simple_polygon_2 merge_points(simple_polygon_2 left, simple_polygon_2 right);
 }
 
 #endif

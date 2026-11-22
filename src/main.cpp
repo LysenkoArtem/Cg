@@ -9,7 +9,8 @@
 int main() {
 
     int mode;
-    std::cout << "1.Simple polygon\n" << "2.Convex polygon 1\n" << "3.Convex polygon 2\n" << "4.Star polygon\n" << "5.Tanget to convex\n";
+    std::cout << "1.Simple polygon\n" << "2.Convex polygon 1\n" << "3.Convex polygon 2\n" << "4.Star polygon\n" << "5.Tanget to convex\n"
+     << "6.Graham hull\n" << "7.Preparata-Hong\n" << "8.Triangulation\n";
     std::cin >> mode;
 
     int n;
@@ -19,6 +20,7 @@ int main() {
     cg::simple_polygon_2 poly;
     cg::points_array arr;
     cg::points_array border;
+    cg::triangulation triang;
     switch (mode) {
         case 1:
             poly = cg::generate_convex_polygon(n);
@@ -53,9 +55,15 @@ int main() {
             border = cg::preparata_hong(arr);
             draw_block_2(arr, border);
             break;
+
+        case 8:
+            triang.push_back({{0, 1}, {0, -1}, {1, 0}});
+            triang.push_back({{0, 1}, {0, -1}, {-1, 0}});
+            draw_triangulation(triang);
+            break;
             
         default:
-            std::cout << "Wrong arguments\n";
+            std::cout << "Неправильные аргументы";
             break;
     }
     return 0;

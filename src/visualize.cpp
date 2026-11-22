@@ -157,3 +157,35 @@ void draw_block_2(cg::points_array points, cg::points_array border) {
         window.display();
     }
 }
+
+void draw_triangulation(cg::triangulation trgn) {
+    sf::RenderWindow window(
+        sf::VideoMode({WIDTH, HEIGHT}),
+        "Calc geometry"
+    );
+
+    sf::ConvexShape triangle;
+    sf::Color fillColor = {255, 0, 0, 70};
+    triangle.setFillColor(fillColor);
+    triangle.setOutlineColor(sf::Color::Black);
+    triangle.setOutlineThickness(1);
+    triangle.setPointCount(3);
+
+    while (window.isOpen()) {
+        while (const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>())
+                window.close();
+        }
+
+        window.clear(sf::Color::White);
+
+        for (auto& tr : trgn) {
+            for (int i = 0; i < 3; i++) {
+                triangle.setPoint(i, transform_to_vis(tr[i]));
+            }
+            window.draw(triangle);
+        }
+
+        window.display();
+    }
+}

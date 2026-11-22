@@ -234,8 +234,6 @@ simple_polygon_2 preparata_hong(points_array& points) {
                 return a.x < b.x;
         }
         );
-    for (auto p: sorted_points)
-        std::cerr << p.x << ' ' << p.y << '\n';
     return prh_rec(sorted_points, 0, points.size());
 
 }
@@ -248,17 +246,82 @@ simple_polygon_2 prh_rec(points_array& points, int start, int end) {
         left_part = prh_rec(points, start, (start+end)/2);
         right_part = prh_rec(points, (start+end)/2, end);
 
-        points_array res(left_part);
-        for (auto point: right_part) {
-            res.push_back(point);
-        }
-        return res;
+        return merge_points(left_part, right_part);
     }
     else {
         points_array np(points.begin()+start, points.begin()+end);
         return convex_hull_graham(np);
     }
 
+}
+
+simple_polygon_2 merge_points(simple_polygon_2 left, simple_polygon_2 right) {
+    int lp_r = 0;
+    double tmp_x = left[0].x;
+    for (int i = 0; i < left.size(); ++i) {
+        if (left[i].x > tmp_x) {
+            lp_r = i;
+            tmp_x = left[i].x;
+        }
+    }
+
+    int rp_l = 0;
+    tmp_x = right[0].x;
+    for (int i = 0; i < right.size(); ++i) {
+        if (right[i].x < tmp_x) {
+            rp_l = i;
+            tmp_x = right[i].x;
+        }
+    }
+
+    //Верхняя касательная
+    int upper_l = lp_r;
+    int upper_r = rp_l;
+    bool flag = 0;
+    while (!flag) {
+        flag = 1;
+        while (orientation(right[upper_r], left[upper_l], left[(upper_l+1)%left.size()]) == Orientation::right) {
+            upper_l = (upper_l+1) % left.size();
+            flag = 0;
+        }
+        while (orientation(left[upper_l], right[upper_r], right[(right.size()+upper_r-1)%right.size()]) == Orientation::left) {
+            upper_r = (right.size()+upper_r-1)%right.size();
+            flag = 0;
+        }
+    }
+
+    // Нaжняя кaсательная
+    int lower_l = lp_r;
+    int lower_r = rp_l;
+    flag = 0;
+    while (!flag) {
+        flag = 1;
+        while (orientation(right[lower_r], left[lower_l], left[(left.size() + lower_l-1)%left.size()]) == Orientation::left) {
+            lower_l = (left.size()+lower_l - 1) % left.size();
+            flag = 0;
+        }
+        while (orientation(left[lower_l], right[lower_r], right[(lower_r+1)%right.size()]) == Orientation::right) {
+            lower_r = (lower_r+1) % right.size();
+            flag = 0;
+        }
+    }
+
+    points_array res;
+    int idx = upper_l;
+    res.push_back(left[upper_l]);
+    while (idx != lower_l) {
+        idx = (idx + 1) % left.size();
+        res.push_back(left[idx]);
+    }
+
+    idx = lower_r;
+    res.push_back(right[lower_r]);
+    while (idx != upper_r) {
+        idx = (idx + 1) % right.size();
+        res.push_back(right[idx]);
+    }
+
+    return res;
 }
 
 
