@@ -1,10 +1,12 @@
 #include "cg.h"
 #include <algorithm>
+#include <cstddef>
 #include <cstdlib>
 #include <iostream>
+#include <list>
 #include <math.h>
 #include <algorithm>
-#include <queue>
+#include <optional>
 
 namespace cg {
 
@@ -322,6 +324,68 @@ simple_polygon_2 merge_points(simple_polygon_2 left, simple_polygon_2 right) {
     }
 
     return res;
+}
+
+triangulation_2 ear_clipping(const simple_polygon_2 &poly) {
+
+    struct vertex_t;
+    using vertex_list_t = std::list<vertex_t>;
+    using vertex_handle_t = vertex_list_t::iterator;
+    using concave_list_t = std::list<vertex_handle_t>;
+    using ear_list_t = std::list<vertex_handle_t>;
+
+    struct vertex_t {
+        size_t index;
+        point_2 coords;
+        std::optional<concave_list_t::iterator> concave;
+        std::optional<ear_list_t::iterator> ear;
+
+    };
+
+    triangulation_2 triangulation;
+    auto output_triangle = [&triangulation](vertex_handle_t p0, vertex_handle_t p1, vertex_handle_t p2){
+        triangulation.push_back({p0->index, p1->index, p2->index});
+    };
+
+
+    vertex_list_t vertex_list;
+    concave_list_t concave_list;
+    ear_list_t ears_list;
+
+    auto cyclic_prev = [&vertex_list](vertex_handle_t p) {
+        if (p == vertex_list.begin())
+            return std::prev(vertex_list.end());
+        return std::prev(p);
+    };
+    auto cyclic_next = [&vertex_list](vertex_handle_t p) {
+        if (p == std::prev(vertex_list.end()))
+            return  vertex_list.begin();
+        return std::next(p);
+
+    };
+
+    auto is_concave = [&cyclic_prev, &cyclic_next](vertex_handle_t p) {
+        return (orientation(cyclic_prev(p)->coords, p->coords, cyclic_next(p)->coords) == Orientation::right);
+    };
+
+    auto is_ear = [&concave_list, &cyclic_next, &cyclic_prev](vertex_handle_t p) {
+        for (auto const &cp: concave_list)
+            doSex();
+    };
+
+    for (size_t i=0; i < poly.size(); i++) {
+        vertex_list.push_back({i, poly[i]});
+    }
+
+    for (auto p = vertex_list.begin(); p != vertex_list.end(); ++p) {
+        if (is_concave(p)) {
+            p->concave = concave_list.emplace(concave_list.end(), p);
+
+        }
+    }
+
+    return {};
+
 }
 
 

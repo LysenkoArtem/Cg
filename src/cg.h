@@ -44,6 +44,15 @@ using polygon_tangents_2 = std::pair<point_2, point_2>;
 using triangle = std::vector<point_2>;
 using triangulation = std::vector<triangle>;
 
+struct index_3 {
+    size_t i0;
+    size_t i1;
+    size_t i2;
+};
+
+
+using triangulation_2 = std::vector<index_3>;
+
 double pseudoscalar(point_2 a, point_2 b);
 
 enum class Orientation {
@@ -73,6 +82,11 @@ simple_polygon_2 convex_hull_graham(points_array const &points);
 simple_polygon_2 preparata_hong(points_array& points);
 simple_polygon_2 prh_rec(points_array& points, int start, int end);
 simple_polygon_2 merge_points(simple_polygon_2 left, simple_polygon_2 right);
+
+triangulation_2 ear_clipping(simple_polygon_2 const &poly);
+
+
 }
+
 
 #endif
