@@ -369,6 +369,8 @@ triangulation_2 ear_clipping(const simple_polygon_2 &poly) {
     };
 
     auto is_ear = [&concave_list, &cyclic_next, &cyclic_prev](vertex_handle_t p) {
+        if (p->concave)
+            return false;
         for (auto const &cp: concave_list) {
             if (orientation(cyclic_prev(p)->coords,  p->coords, cp->coords) == Orientation::left 
                 && orientation(p->coords, cyclic_next(p)->coords, cp->coords) == Orientation::left
@@ -386,6 +388,11 @@ triangulation_2 ear_clipping(const simple_polygon_2 &poly) {
         if (is_concave(p)) {
             p->concave = concave_list.emplace(concave_list.end(), p);
 
+        }
+    }
+    for (auto p = vertex_list.begin(); p != vertex_list.end(); ++p) {
+        if (is_ear(p)) {
+            p->ear = ears_list.emplace(ears_list.end(), p);
         }
     }
 
